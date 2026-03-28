@@ -27,5 +27,6 @@ defmodule Hug.Application do
   defp register_capabilities do
     Hug.Capability.Registry.register(Hug.Capability.Shell)
     Hug.Capability.Registry.register(Hug.Capability.MemorySearch)
+    Hug.Capability.Registry.register(Hug.Capability.SelfModify)
   end
 end

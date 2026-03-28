@@ -80,6 +80,26 @@ defmodule Hug.Agent do
     Hug.Memory.ConversationLogger.log_message(message)
   end
 
+  defp apply_strategies(context) do
+    context
+    |> apply_strategy(Hug.Strategies.Reasoning)
+    |> apply_strategy(Hug.Strategies.Planning)
+    |> apply_strategy(Hug.Strategies.ToolSelection)
+  end
+
+  defp apply_strategy(context, module) do
+    case module.apply(context) do
+      {:ok, new_context} -> new_context
+      {:error, reason} ->
+        Logger.warning("Strategy #{inspect(module)} failed: #{inspect(reason)}, using fallback")
+        context
+    end
+  rescue
+    e ->
+      Logger.warning("Strategy #{inspect(module)} crashed: #{Exception.message(e)}, using fallback")
+      context
+  end
+
   # --- Agentic loop (non-streaming, used for tool calling) ---
 
   defp agentic_loop(messages, state) do

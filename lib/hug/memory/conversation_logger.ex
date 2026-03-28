@@ -31,7 +31,7 @@ defmodule Hug.Memory.ConversationLogger do
 
     timestamp = DateTime.utc_now() |> DateTime.to_iso8601(:basic) |> String.replace(~r/[^\w]/, "_")
     path = Path.join(dir, "#{timestamp}.jsonl")
-    {:ok, file} = File.open(path, [:append, :utf8])
+    {:ok, file} = File.open(path, [:append, :raw])
 
     {:ok, %__MODULE__{file: file, path: path}}
   end
@@ -39,7 +39,7 @@ defmodule Hug.Memory.ConversationLogger do
   @impl true
   def handle_cast({:log, message}, state) do
     line = Jason.encode!(Map.put(message, "timestamp", DateTime.utc_now() |> DateTime.to_iso8601()))
-    IO.write(state.file, line <> "\n")
+    IO.binwrite(state.file, line <> "\n")
     {:noreply, state}
   end
 

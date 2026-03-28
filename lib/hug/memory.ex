@@ -21,7 +21,7 @@ defmodule Hug.Memory do
   def search(query) do
     dir = memory_dir()
 
-    case System.cmd("rg", ["-i", "-C", "2", "--no-heading", query, dir], stderr_to_stdout: true) do
+    case System.cmd("rg", ["-i", "-C", "2", "--no-heading", "--no-ignore", query, dir], stderr_to_stdout: true) do
       {output, 0} -> {:ok, output}
       {_, 1} -> {:ok, "No results found for: #{query}"}
       {output, _} -> {:error, output}
